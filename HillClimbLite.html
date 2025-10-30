@@ -1,0 +1,368 @@
+<!--
+HillClimbLite.html — Updated
+Improvements: stronger engine so car moves forward more reliably, smoother ground friction, improved exhaust & particle effects (smoke + flame) for nicer visuals, tuned suspension/physics.
+Save as HillClimbLite.html and open in a modern browser.
+Controls: ← / A = tilt left / brake  ·  → / D = tilt right / accelerate  ·  Space / R = restart
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HillClimbLite — Updated</title>
+<style>
+  :root{--bg:#071126;--ground:#2b6f33;--accent:#ffcc00}
+  html,body{height:100%;margin:0;background:linear-gradient(#071126,#0c1a2b);font-family:Inter, system-ui, sans-serif;color:#e6eef8}
+  #gameWrap{display:flex;flex-direction:column;align-items:center;padding:14px}
+  canvas{border-radius:10px;box-shadow:0 12px 34px rgba(2,6,23,0.85);background:linear-gradient(#95d0ff 0%, rgba(255,255,255,0) 40%)}
+  .hud{width:1000px;max-width:calc(100vw - 40px);display:flex;justify-content:space-between;align-items:center;margin:10px 0}
+  .panel{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:8px;font-weight:600}
+  .big{font-size:18px}
+  .small{font-size:13px;color:#bcd}
+  button{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;font-weight:700;cursor:pointer}
+  footer{margin-top:10px;color:#9fb}
+</style>
+</head>
+<body>
+<div id="gameWrap">
+  <div class="hud">
+    <div class="panel">
+      <div class="big">Distance: <span id="dist">0</span> m</div>
+      <div class="small">Speed: <span id="speed">0</span> km/h</div>
+    </div>
+    <div class="panel">Fuel: <span id="fuel">100</span>%</div>
+    <div>
+      <button id="restartBtn">Restart (R / Space)</button>
+    </div>
+  </div>
+  <canvas id="game" width="1000" height="600"></canvas>
+  <footer>Controls: ← / A = Brake & tilt left · → / D = Accelerate & tilt right · Space = Restart</footer>
+</div>
+
+<script>
+// -------------------- Configuration --------------------
+const CONFIG = {
+  scale: 1,               // world scale
+  gravity: 1400,          // px/s^2
+  wheelRadius: 18,        // px
+  chassisWidth: 120,
+  chassisHeight: 28,
+  suspensionStiffness: 4500,
+  frictionGround: 0.99,   // less damping so car keeps momentum
+  enginePower: 16000,     // stronger engine force so car moves forward well
+  maxSpeed: 900,          // px/s (higher cap)
+  fuelConsumption: 6,     // % per 1000m
+  terrainSegment: 4,      // px per sample
+}
+
+// -------------------- Canvas & Scaling --------------------
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+let W = canvas.width, H = canvas.height;
+
+function resizeCanvasToDisplaySize() {
+  const maxW = Math.min(1200, window.innerWidth - 40);
+  canvas.width = maxW;
+  canvas.height = Math.round((maxW / 1000) * 600);
+  W = canvas.width; H = canvas.height;
+}
+window.addEventListener('resize', resizeCanvasToDisplaySize);
+resizeCanvasToDisplaySize();
+
+// -------------------- Helpers --------------------
+function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+function lerp(a,b,t){ return a + (b-a)*t; }
+
+// Simple seeded random
+class RNG{constructor(s=12345){this.s=s}}
+RNG.prototype.next = function(){this.s = (this.s * 1664525 + 1013904223) | 0; return ((this.s >>> 0) / 4294967295);} 
+
+// -------------------- Terrain Generation --------------------
+class Terrain {
+  constructor(seed=42){
+    this.seed = seed; this.rng = new RNG(seed);
+    this.pts = []; this.generate();
+  }
+  generate(){
+    const seg = CONFIG.terrainSegment; const len = 40000; // px
+    const samples = Math.ceil(len/seg) + 400;
+    this.pts = new Array(samples);
+    // layered sine + random offsets
+    const baseAmp = 120; const midAmp = 70; const smallAmp = 28;
+    const baseFreq = 0.0007; const midFreq = 0.0035; const smallFreq=0.02;
+    for(let i=0;i<samples;i++){
+      const x = i*seg;
+      const noise = (this.rng.next()-0.5)*60;
+      const y = H*0.65
+        - Math.sin(x*baseFreq + this.seed)*baseAmp
+        - Math.sin(x*midFreq + this.seed*2)*midAmp
+        - Math.sin(x*smallFreq + this.seed*3)*smallAmp
+        + noise;
+      this.pts[i] = {x, y};
+    }
+  }
+  getY(x){
+    const seg = CONFIG.terrainSegment; const i = Math.floor(x/seg);
+    if(i < 0) return H*0.6;
+    if(i >= this.pts.length-1) return H*0.6;
+    const a = this.pts[i], b = this.pts[i+1];
+    const t = (x - a.x)/(b.x - a.x);
+    return lerp(a.y, b.y, t);
+  }
+  draw(offset){
+    ctx.beginPath();
+    const startI = Math.max(0, Math.floor(offset/CONFIG.terrainSegment)-2);
+    for(let i=startI;i<this.pts.length;i++){
+      const px = this.pts[i].x - offset + W*0.35;
+      if(px > W+50) break;
+      if(i===startI) ctx.moveTo(px, this.pts[i].y);
+      else ctx.lineTo(px, this.pts[i].y);
+    }
+    ctx.lineTo(W, H); ctx.lineTo(0,H); ctx.closePath();
+    ctx.fillStyle = '#2b6f33'; ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.12)'; ctx.lineWidth = 1; ctx.stroke();
+  }
+}
+
+// -------------------- Particle System for exhaust --------------------
+class Particle {
+  constructor(x,y,vx,vy,size,life,type){ this.x=x;this.y=y;this.vx=vx;this.vy=vy;this.size=size;this.life=life;this.type=type; }
+}
+const particles = [];
+function spawnExhaust(worldX, worldY, intensity){
+  // spawn several particles with randomized angle backwards
+  for(let i=0;i<Math.round(2 + intensity*3); i++){
+    const ang = Math.PI + (Math.random()-0.5)*0.6; // backwards
+    const speed = 60 + Math.random()*120 + intensity*120;
+    const vx = Math.cos(ang)*speed; const vy = Math.sin(ang)*speed*(0.5 + Math.random());
+    const life = 0.6 + Math.random()*0.6;
+    const size = 6 + Math.random()*8 + intensity*6;
+    const type = Math.random() < 0.4 ? 'flame' : 'smoke';
+    particles.push(new Particle(worldX, worldY, vx, vy, size, life, type));
+  }
+}
+function updateAndDrawParticles(dt, offset){
+  for(let i = particles.length-1; i>=0; i--){
+    const p = particles[i];
+    p.life -= dt; if(p.life <= 0){ particles.splice(i,1); continue; }
+    // physics
+    p.vy += CONFIG.gravity * 0.06 * dt; // light gravity
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    // draw
+    const sx = p.x - offset + W*0.35; const sy = p.y;
+    if(p.type === 'flame'){
+      const t = p.life; const alpha = clamp(t,0,1);
+      const grd = ctx.createRadialGradient(sx,sy,0,sx,sy,p.size*1.6);
+      grd.addColorStop(0, `rgba(255,220,100,${alpha})`);
+      grd.addColorStop(0.5, `rgba(255,120,40,${alpha*0.9})`);
+      grd.addColorStop(1, `rgba(120,30,10,0)`);
+      ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(sx,sy,p.size* (0.9 + (1-t)*0.6),0,Math.PI*2); ctx.fill();
+    } else {
+      const t = p.life; const alpha = clamp(t,0,1)*0.85;
+      ctx.globalAlpha = alpha*0.9;
+      ctx.beginPath();
+      ctx.fillStyle = '#666'; ctx.ellipse(sx, sy, p.size*1.2, p.size*0.7, 0, 0, Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  }
+}
+
+// -------------------- Car Physics (tuned) --------------------
+class Car {
+  constructor(x=120){
+    this.x = x; this.y = 0; this.vx = 0; this.vy = 0; this.angle = 0; this.angularV = 0;
+    this.wheelOffset = {ax: -38, bx: 38};
+    this.wheelY = 18; // relative
+    this.fuel = 100; this.distance = 0; this.alive = true;
+  }
+  update(dt, controls, terrain){
+    if(!this.alive) return;
+    let engine = 0;
+    if(controls.right && this.fuel>0) engine = CONFIG.enginePower;
+    if(controls.left) engine -= CONFIG.enginePower*0.7; // braking
+    const ax = this.x + this.wheelOffset.ax; const bx = this.x + this.wheelOffset.bx;
+    const ay = terrain.getY(ax); const by = terrain.getY(bx);
+    // gravity
+    this.vy += CONFIG.gravity * dt;
+    // apply engine force to horizontal velocity (when on/near ground stronger)
+    const groundY = Math.min(ay, by) - CONFIG.wheelRadius - CONFIG.chassisHeight/2;
+    const onGround = (this.y >= groundY - 4);
+    if(onGround){
+      // add forward thrust proportional to engine and inversely to mass tune
+      const accel = engine / 900; // tuned for stronger movement
+      this.vx += accel * dt;
+      // friction
+      this.vx *= CONFIG.frictionGround;
+      // small bounce
+      if(this.y > groundY) { this.y = groundY; this.vy *= -0.06; }
+      // fuel use
+      if(Math.abs(engine) > 10 && this.fuel>0){ this.fuel = clamp(this.fuel - (Math.abs(this.vx)/4000 + 0.02)*dt*CONFIG.fuelConsumption*8, 0, 100); }
+    } else {
+      // in air
+      this.vx *= 0.9998;
+      if(controls.left) this.angularV -= 2.2 * dt;
+      if(controls.right) this.angularV += 2.2 * dt;
+      this.angularV *= 0.995;
+      this.angle += this.angularV;
+    }
+    // integrate
+    this.x += this.vx * dt;
+    this.y += this.vy * dt;
+
+    // stabilize angle to slope when on ground
+    if(onGround){
+      const slope = Math.atan2(by - ay, bx - ax);
+      this.angle = lerp(this.angle, slope, Math.min(0.2, dt*8));
+    }
+
+    // exhaust particles spawn (world coords)
+    const exhaustX = this.x - 52 * Math.cos(this.angle) ;
+    const exhaustY = this.y - 6 + 8 * Math.sin(this.angle);
+    const intensity = controls.right ? Math.min(1, Math.abs(this.vx)/200) : 0.08;
+    if(intensity > 0.02 && this.fuel > 0){ spawnExhaust(exhaustX, exhaustY, intensity); }
+
+    // cap speed
+    this.vx = clamp(this.vx, -CONFIG.maxSpeed, CONFIG.maxSpeed);
+    this.distance = Math.max(this.distance, this.x);
+    if(this.y > H + 200 || this.fuel <= 0 && this.x - this.distance > 5000) { this.alive = false; }
+  }
+  draw(offset){
+    // screen pos
+    const sx = this.x - offset + W*0.35; const sy = this.y;
+    // draw exhaust glow behind car (subtle)
+    ctx.save();
+    // glow
+    const g = ctx.createRadialGradient(sx-44, sy-6, 0, sx-44, sy-6, 60);
+    g.addColorStop(0, 'rgba(255,200,120,0.06)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(sx-44, sy-6, 50, 24, 0, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    ctx.save(); ctx.translate(sx, sy); ctx.rotate(this.angle);
+    // chassis
+    ctx.fillStyle = '#1f1f2a'; ctx.strokeStyle='#000';
+    roundRect(ctx, -CONFIG.chassisWidth/2, -CONFIG.chassisHeight/2 - 8, CONFIG.chassisWidth, CONFIG.chassisHeight, 10, true, true);
+    // windows
+    ctx.fillStyle = 'rgba(175,230,255,0.9)'; ctx.fillRect(-28, -18, 56, 12);
+    // wheels
+    const wa = {x: this.wheelOffset.ax, y: CONFIG.wheelRadius};
+    const wb = {x: this.wheelOffset.bx, y: CONFIG.wheelRadius};
+    ctx.fillStyle = '#0c0c0f'; drawWheel(ctx, wa.x, wa.y+6, CONFIG.wheelRadius);
+    ctx.fillStyle = '#0c0c0f'; drawWheel(ctx, wb.x, wb.y+6, CONFIG.wheelRadius);
+    // decals
+    ctx.fillStyle = '#ffcc00'; ctx.fillRect(-CONFIG.chassisWidth/2 + 10, -6, 12, 5);
+    // exhaust pipe hint
+    ctx.fillStyle = '#333'; ctx.fillRect(-56, -6, 10, 4);
+    ctx.restore();
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r, fill, stroke){
+  ctx.beginPath(); ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath(); if(fill) ctx.fill(); if(stroke) ctx.stroke();
+}
+function drawWheel(ctx, x, y, r){
+  ctx.save(); ctx.translate(x, y);
+  ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#666'; ctx.beginPath(); ctx.arc(0,0,r*0.55,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+// -------------------- Main Game State --------------------
+let terrain = new Terrain(~~(Math.random()*99999));
+let car = new Car(120);
+let offset = 0; // camera x offset
+let last = performance.now();
+let running = true;
+
+// Controls
+const controls = {left:false,right:false};
+window.addEventListener('keydown', e=>{
+  if(e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A'){ controls.left = true; }
+  if(e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D'){ controls.right = true; }
+  if(e.code === 'Space' || e.key === 'r' || e.key === 'R'){ restart(); }
+});
+window.addEventListener('keyup', e=>{
+  if(e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A'){ controls.left = false; }
+  if(e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D'){ controls.right = false; }
+});
+
+// Restart
+function restart(){ terrain = new Terrain(~~(Math.random()*99999)); car = new Car(120); offset = 0; running=true; particles.length = 0; }
+document.getElementById('restartBtn').addEventListener('click', restart);
+
+// HUD Update
+function updateHUD(){
+  document.getElementById('dist').textContent = Math.floor(car.distance/1.6);
+  document.getElementById('speed').textContent = Math.round(Math.abs(car.vx)*3.6);
+  document.getElementById('fuel').textContent = Math.floor(car.fuel);
+}
+
+// -------------------- Game Loop --------------------
+function loop(now){
+  const dt = Math.min(0.05, (now - last)/1000); last = now;
+  // update physics
+  car.update(dt, controls, terrain);
+  // camera follows car, but smoothed
+  const targetOffset = Math.max(0, car.x - W*0.35);
+  offset = lerp(offset, targetOffset, dt*6);
+  // clear
+  ctx.clearRect(0,0,W,H);
+  // sky gradient
+  const skyGrad = ctx.createLinearGradient(0,0,0,H*0.6);
+  skyGrad.addColorStop(0,'#8fd1ff'); skyGrad.addColorStop(1,'rgba(143,209,255,0.0)');
+  ctx.fillStyle = skyGrad; ctx.fillRect(0,0,W,H*0.6);
+  // sun
+  ctx.beginPath(); ctx.arc(W - 120, 80, 38, 0, Math.PI*2); ctx.fillStyle='rgba(255,235,120,0.95)'; ctx.fill();
+  // decorative parallax hills
+  drawParallaxHills(offset);
+  // particles behind car first (so they appear under car)
+  updateAndDrawParticles(dt, offset);
+  // terrain
+  terrain.draw(offset);
+  // draw car
+  car.draw(offset);
+  // small foreground particles (smoke puffs on impact)
+  updateAndDrawParticles(dt, offset);
+  // update HUD
+  updateHUD();
+  // check crash
+  if(!car.alive){ drawGameOver(); }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// -------------------- Decorations --------------------
+function drawParallaxHills(offset){
+  ctx.save();
+  const layers = [0.18, 0.42, 0.68];
+  layers.forEach((f,i)=>{
+    ctx.beginPath();
+    const amp = (30 + i*30);
+    for(let x= -200; x<W+200; x+=20){
+      const worldX = x + offset*(1-f);
+      const y = H*0.6 - Math.sin(worldX*0.002 + i*2)*amp - i*12;
+      if(x===-200) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.lineTo(W,H); ctx.lineTo(0,H);
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'rgba(20,50,30,'+ (0.14 - i*0.02) +')'); g.addColorStop(1,'rgba(20,50,40,0)');
+    ctx.fillStyle=g; ctx.fill();
+  });
+  ctx.restore();
+}
+
+function drawGameOver(){
+  ctx.save(); ctx.fillStyle='rgba(0,0,0,0.45)'; ctx.fillRect(W*0.15,H*0.25,W*0.7,H*0.2);
+  ctx.fillStyle='#fff'; ctx.font='28px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('Crashed — Press R or Space to restart', W/2, H*0.38);
+  ctx.restore();
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Weekly Study Routine — Printable</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--accent:#0066cc;--muted:#666}
+    *{box-sizing:border-box}
+    body{font-family:'Poppins',system-ui,Arial,sans-serif;margin:24px;color:#222}
+    .page{max-width:900px;margin:0 auto;padding:28px;border:1px solid #eee;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.05);background:#fff}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .title{font-weight:700;font-size:22px;color:var(--accent)}
+    .subtitle{font-size:12px;color:var(--muted)}
+
+    /* Decorative lines for cutting */
+    .cutline{border-top:2px dashed #ddd;margin:18px 0}
+
+    table{width:100%;border-collapse:collapse;margin-top:6px}
+    th,td{padding:14px 12px;text-align:left;border-bottom:1px solid #f0f0f0}
+    th{background:linear-gradient(90deg,#f7fbff,#ffffff);font-weight:600}
+    tr.day:hover{background:#fbfcff}
+
+    .time{font-weight:600;color:#333}
+    .subject{font-size:14px}
+    .note{font-size:12px;color:var(--muted);margin-top:8px}
+
+    /* Small print-friendly tweaks */
+    @media print{
+      body{margin:0}
+      .page{box-shadow:none;border:none;margin:0;padding:10mm}
+      header .actions{display:none}
+      .cutline{color:#bbb}
+      th,td{padding:10px}
+      .title{font-size:18px}
+    }
+
+    /* A small footer with space for signature or date */
+    footer{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+    .sig{font-size:13px;color:var(--muted)}
+    .print-btn{background:var(--accent);color:white;padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600}
+
+    /* Responsive */
+    @media (max-width:640px){.page{padding:18px}.title{font-size:18px}th,td{padding:10px}}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <div class="title">Weekly Study Routine</div>
+        <div class="subtitle">Same schedule every day — প্রিন্ট করে রাখো। (Time: 8:00 AM–12:00 PM, 4:00 PM–5:00 PM, 6:00 PM–12:00 AM)</div>
+      </div>
+      <div class="actions">
+        <a href="#" onclick="window.print();return false;" class="print-btn">Print / Save as PDF</a>
+      </div>
+    </header>
+
+    <div class="cutline"></div>
+
+    <table role="table" aria-label="weekly routine">
+      <thead>
+        <tr>
+          <th style="width:18%">Day</th>
+          <th style="width:37%">8:00 AM — 12:00 PM</th>
+          <th style="width:18%">4:00 PM — 5:00 PM</th>
+          <th style="width:27%">6:00 PM — 12:00 AM</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="day"><td><strong>Saturday</strong></td>
+          <td class="subject">Physics, Chemistry, Biology (Part 1)</td>
+          <td class="subject">English / Bangla (alternate days)</td>
+          <td class="subject">Math, Biology (Part 2) + ICT (missing morning parts)</td>
+        </tr>
+
+        <tr class="day"><td><strong>Sunday</strong></td>
+          <td class="subject">Physics, Chemistry, Biology (Part 1)</td>
+          <td class="subject">English / Bangla (alternate days)</td>
+          <td class="subject">Math, Biology (Part 2) + ICT</td>
+        </tr>
+
+        <tr class="day"><td><strong>Monday</strong></td>
+          <td class="subject">Physics, Chemistry, Biology (Part 1)</td>
+          <td class="subject">English / Bangla</td>
+          <td class="subject">Math, Biology (Part 2) + ICT</td>
+        </tr>
+
+        <tr class="day"><td><strong>Tuesday</strong></td>
+          <td class="subject">Physics, Chemistry, Biology (Part 1)</td>
+          <td class="subject">English / Bangla</td>
+          <td class="subject">Math, Biology (Part 2) + ICT</td>
+        </tr>
+
+        <tr class="day"><td><strong>Wednesday</strong></td>
+          <td class="subject">Physics, Chemistry, Biology (Part 1)</td>
+          <td class="subject">English / Bangla</td>
+          <td class="subject">Math, Biology (Part 2) + ICT</td>
+        </tr>
+
+        <tr class="day"><td><strong>Thursday</strong></td>
+          <td class="subject">Physics, Chemistry, Biology (Part 1)</td>
+          <td class="subject">English / Bangla</td>
+          <td class="subject">Math, Biology (Part 2) + ICT</td>
+        </tr>
+
+        <tr class="day"><td><strong>Friday</strong></td>
+          <td class="subject">Physics, Chemistry, Biology (Part 1)</td>
+          <td class="subject">English / Bangla</td>
+          <td class="subject">Math, Biology (Part 2) + ICT</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">প্রস্তাবনা: English/Bangla alternately নাও — একদিন English, পরের দিন Bangla। রাতে Math–এ সমস্যা হলে সকালে ব্যাকআপ ICT সময় ব্যবহার করে কভার করো।</div>
+
+    <div class="cutline"></div>
+
+    <footer>
+      <div class="sig">Prepared for: MY  study routine</div>
+      <div class="sig">Date: ____________________</div>
+    </footer>
+  </div>
+</body>
+</html>

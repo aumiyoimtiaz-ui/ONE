@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy 10th Birthday, Arani!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#fff0f6; --bg2:#fff6e6; --accent:#ff4fa3; --card-bg:#fff; --text:#222;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{font-family:'Montserrat',sans-serif;margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--bg1),var(--bg2));}
+
+    /* layout */
+    .wrap{width:100%;max-width:980px;padding:20px;display:grid;grid-template-columns:1fr 360px;gap:20px}
+    .card{background:var(--card-bg);border-radius:18px;padding:22px;box-shadow:0 18px 40px rgba(0,0,0,0.12);position:relative;overflow:hidden;min-height:540px;transform:translateY(18px);opacity:0;animation:enter 700ms ease-out forwards}
+    @keyframes enter{to{transform:none;opacity:1}}
+
+    /* header ribbon */
+    .ribbon{position:absolute;left:-40px;top:20px;background:linear-gradient(90deg,#ffd1ec,#ffb7d3);padding:8px 110px;transform:rotate(-12deg);box-shadow:0 8px 20px rgba(0,0,0,0.08);font-family:'Baloo 2',cursive;color:#6b0536}
+
+    h1.title{font-family:'Baloo 2',cursive;font-size:34px;color:var(--accent);margin:0;letter-spacing:0.4px;animation:pulse 1.6s ease-in-out infinite}
+    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+    .subtitle{color:var(--text);margin-top:6px}
+
+    .content{display:flex;gap:18px;align-items:flex-start}
+
+    .characters{width:240px;display:flex;flex-direction:column;gap:12px;align-items:center}
+    .char{width:170px;height:130px;cursor:pointer}
+
+    .card-body{flex:1;position:relative;padding:6px 4px}
+    .message{margin-top:6px;font-size:18px;line-height:1.4}
+    .from{margin-top:18px}
+
+    /* floating banner */
+    .banner{position:absolute;right:18px;top:12px;padding:10px 14px;border-radius:12px;background:linear-gradient(90deg,#fff6b3,#ffd6e6);box-shadow:0 8px 20px rgba(0,0,0,0.06);font-weight:700}
+
+    .controls{display:flex;flex-direction:column;gap:10px}
+    input,textarea,select,button{padding:10px;border-radius:8px;border:1px solid #eee;font-size:15px}
+    textarea{min-height:84px}
+    .btn{background:var(--accent);color:#fff;border:none;cursor:pointer}
+
+    /* confetti canvas on top */
+    #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+
+    /* sparkle behind message */
+    .sparkle{position:absolute;left:10px;top:112px;width:180px;height:180px;pointer-events:none;opacity:0.12}
+
+    /* print layout: A5 friendly */
+    @media print{
+      body{background:white}
+      .wrap{max-width:700px}
+      .card{box-shadow:none;transform:none;border-radius:6px}
+      .controls{display:none}
+    }
+    @page{size:A5}
+
+    @media (max-width:900px){.wrap{grid-template-columns:1fr}.characters{flex-direction:row}}
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+  <div class="wrap">
+    <div class="card" id="card">
+      <div class="ribbon">Happy 10th Birthday!</div>
+      <div class="banner">10 🎉</div>
+
+      <h1 class="title" id="card-title">Happy <span id="card-age">10th</span> Birthday, <span id="sister-name">Arani</span>!</h1>
+      <p class="subtitle">To my brilliant class 3 sister — keep shining!</p>
+
+      <div class="content">
+        <div class="characters">
+          <!-- improved cute cat -->
+          <svg class="char cat" id="cat" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <ellipse cx="100" cy="96" rx="60" ry="40" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+              <circle cx="70" cy="60" r="28" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+              <circle cx="130" cy="60" r="28" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+              <circle cx="78" cy="62" r="8" fill="#3b3b3b"/>
+              <circle cx="122" cy="62" r="8" fill="#3b3b3b"/>
+              <path d="M88 75 Q100 86 112 75" stroke="#b34b6b" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <polygon points="52,42 66,26 72,44" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+              <polygon points="148,42 134,26 128,44" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+              <path d="M160 92 Q180 82 188 94 Q180 72 156 88" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+            </g>
+          </svg>
+
+          <!-- improved cute mouse -->
+          <svg class="char mouse" id="mouse" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <ellipse cx="100" cy="100" rx="46" ry="30" fill="#e6f7ff" stroke="#7fbffb" stroke-width="2"/>
+              <circle cx="80" cy="82" r="18" fill="#e6f7ff" stroke="#7fbffb" stroke-width="2"/>
+              <circle cx="120" cy="82" r="18" fill="#e6f7ff" stroke="#7fbffb" stroke-width="2"/>
+              <circle cx="92" cy="84" r="6" fill="#3b3b3b"/>
+              <circle cx="108" cy="84" r="6" fill="#3b3b3b"/>
+              <path d="M94 96 Q100 104 106 96" stroke="#578fcf" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="card-body">
+          <svg class="sparkle" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <g fill="#fff8b3">
+              <circle cx="60" cy="20" r="6"/>
+              <circle cx="90" cy="40" r="4"/>
+              <circle cx="30" cy="40" r="3"/>
+              <circle cx="50" cy="80" r="5"/>
+            </g>
+          </svg>
+
+          <p class="message" id="message-line">You're 10 today — may your day be full of giggles, cake, and fun! 🎂</p>
+          <p class="from">Love, <strong id="from-name">Your Big Brother</strong></p>
+
+          <div style="display:flex;gap:8px;margin-top:18px">
+            <button class="btn" id="celebrate">Surprise! 🎉</button>
+            <button class="btn" id="print">Print / Save as PDF</button>
+            <button class="btn" id="download">Download PNG</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <label>Sibling's name: <input id="input-name" value="Arani" /></label>
+      <label>Age: <input id="input-age" value="10" /></label>
+      <label>Short message: <textarea id="input-message">You're 10 today — may your day be full of giggles, cake, and fun!</textarea></label>
+      <label>From (your name): <input id="input-from" value="Your Big Brother" /></label>
+      <label>Theme: <select id="theme-select"><option value="pink">Pink</option><option value="blue">Blue</option><option value="rainbow">Rainbow</option></select></label>
+      <label>Birthday audio (optional): <input id="audio-file" type="file" accept="audio/*" /></label>
+
+      <div style="display:flex;gap:8px">
+        <button class="btn" id="apply">Apply</button>
+        <button class="btn" id="reset">Reset</button>
+      </div>
+
+      <p style="font-size:13px;color:#33385">Tip: Click on the cat or mouse to see a fun jump. Use "Download PNG" to save an image of the card for sharing.</p>
+    </div>
+  </div>
+
+  <!-- html2canvas for PNG download (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    const nameEl = document.getElementById('sister-name');
+    const ageEl = document.getElementById('card-age');
+    const titleEl = document.getElementById('card-title');
+    const msgEl = document.getElementById('message-line');
+    const fromEl = document.getElementById('from-name');
+
+    document.getElementById('apply').addEventListener('click', ()=>{
+      const n = document.getElementById('input-name').value || '[Name]';
+      const age = document.getElementById('input-age').value || '10';
+      const msg = document.getElementById('input-message').value || '';
+      const from = document.getElementById('input-from').value || 'Love';
+      nameEl.textContent = n;
+      ageEl.textContent = age + (String(age).endsWith('1') && age!=='11' ? 'st' : (String(age).endsWith('2') && age!=='12' ? 'nd' : (String(age).endsWith('3') && age!=='13' ? 'rd' : 'th')));
+      titleEl.innerHTML = `Happy <span id="card-age">${age}th</span> Birthday, <span id="sister-name">${n}</span>!`;
+      msgEl.textContent = msg;
+      fromEl.textContent = from;
+      applyTheme(document.getElementById('theme-select').value);
+    });
+
+    document.getElementById('reset').addEventListener('click', ()=>{
+      document.getElementById('input-name').value = 'Arani';
+      document.getElementById('input-age').value = '10';
+      document.getElementById('input-message').value = "You're 10 today — may your day be full of giggles, cake, and fun!";
+      document.getElementById('input-from').value = 'Your Big Brother';
+      document.getElementById('theme-select').value = 'pink';
+      document.getElementById('apply').click();
+    });
+
+    document.getElementById('print').addEventListener('click', ()=> window.print());
+
+    // download PNG using html2canvas
+    document.getElementById('download').addEventListener('click', ()=>{
+      const node = document.getElementById('card');
+      // temporarily remove controls overlap
+      html2canvas(node, {scale:2, useCORS:true}).then(canvas=>{
+        const url = canvas.toDataURL('image/png');
+        const a = document.createElement('a'); a.href = url; a.download = `Arani_birthday_card.png`; a.click();
+      }).catch(err=> alert('Could not create image. Try opening locally or allow cross-origin resources.'));
+    });
+
+    // audio upload and play
+    const audioInput = document.getElementById('audio-file');
+    let audio = null;
+    audioInput.addEventListener('change', (e)=>{
+      const file = e.target.files[0];
+      if(!file) return;
+      if(audio) { audio.pause(); audio=null }
+      audio = new Audio(URL.createObjectURL(file));
+      audio.volume = 0.9;
+    });
+
+    document.getElementById('celebrate').addEventListener('click', ()=>{
+      launchConfetti();
+      if(audio) audio.play();
+    });
+
+    // character interactions (click -> quick joyful animation)
+    const cat = document.getElementById('cat');
+    const mouse = document.getElementById('mouse');
+    function pop(el){ el.animate([{transform:'translateY(0) scale(1)'},{transform:'translateY(-18px) scale(1.06)'},{transform:'translateY(0) scale(1)'}], {duration:520, easing:'ease-out'}); }
+    cat.addEventListener('click', ()=> pop(cat));
+    mouse.addEventListener('click', ()=> pop(mouse));
+
+    // confetti
+    const confettiCanvas = document.getElementById('confetti');
+    const ctx = confettiCanvas.getContext('2d'); let W,H,particles=[];
+    function resize(){W=confettiCanvas.width=window.innerWidth;H=confettiCanvas.height=window.innerHeight}
+    window.addEventListener('resize', resize); resize();
+    function rand(a,b){return Math.random()*(b-a)+a}
+    function spawn(){particles=[]; for(let i=0;i<140;i++){particles.push({x:rand(0,W),y:rand(-H,0),r:rand(2,8),c:['#ff66b3','#ffd166','#7bdff6','#a0e7a0','#ffd1ec'][Math.floor(rand(0,5))],s:rand(1,3)})}} 
+    function frame(){ctx.clearRect(0,0,W,H); for(let p of particles){p.y += p.s + Math.cos(p.r)*0.6; p.x += Math.sin(p.r); ctx.fillStyle=p.c; ctx.beginPath(); ctx.ellipse(p.x,p.y,p.r,p.r*0.7,0,0,Math.PI*2); ctx.fill(); if(p.y>H+10){p.y=rand(-H,0);p.x=rand(0,W)}} requestAnimationFrame(frame)}
+    function launchConfetti(){spawn(); frame(); setTimeout(()=>particles=[],3800)}
+
+    function applyTheme(t){ if(t==='pink'){document.documentElement.style.setProperty('--bg1','#fff0f6');document.documentElement.style.setProperty('--bg2','#fff6e6');document.documentElement.style.setProperty('--accent','#ff4fa3')} else if(t==='blue'){document.documentElement.style.setProperty('--bg1','#e6f7ff');document.documentElement.style.setProperty('--bg2','#eef6ff');document.documentElement.style.setProperty('--accent','#3b8bff')} else {document.documentElement.style.setProperty('--bg1','#fff8e6');document.documentElement.style.setProperty('--bg2','#eafef2');document.documentElement.style.setProperty('--accent','#ff7aa6')}}
+
+    applyTheme('pink');
+  </script>
+</body>
+</html>

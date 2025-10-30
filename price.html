@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Invoice - Rishit Computers Ltd.</title>
+<style>
+  :root{ --page-w:800px; --border:#333; --muted:#666; --accent:#0a4; }
+  body{ font-family: "Segoe UI", Roboto, Arial, sans-serif; background:#f2f2f2; padding:20px; display:flex; justify-content:center; }
+  .page{ width:var(--page-w); background:#fff; padding:22px; box-shadow:0 6px 18px rgba(0,0,0,.08); border:1px solid #ddd; }
+  header{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px; }
+  .brand{ max-width:52%; }
+  .brand h1{ margin:0; font-size:20px; letter-spacing:0.5px; }
+  .brand p{ margin:4px 0 0 0; color:var(--muted); font-size:12px; }
+  .meta{ text-align:right; font-size:13px; }
+  .meta .title{ font-weight:700; margin-bottom:6px; }
+  .meta div{ margin-bottom:4px; }
+  .section{ display:flex; gap:12px; margin-bottom:14px; }
+  .box{ flex:1; border:1px solid #ddd; padding:10px; min-height:70px; font-size:13px; }
+  .box .label{ color:var(--muted); font-size:12px; margin-bottom:6px; display:block; }
+  .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px; }
+  table.invoice{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.invoice thead th{ background:#f7f7f7; border:1px solid #ddd; padding:8px; text-align:left; font-size:13px; }
+  table.invoice td, table.invoice th{ border:1px solid #ddd; padding:8px; vertical-align:top; }
+  table.invoice tbody tr:nth-child(even){ background:#fff; }
+  .small{ font-size:12px; color:var(--muted); }
+  .right{ text-align:right; }
+  .center{ text-align:center; }
+  .editable{ outline:none; }
+  /* print styles */
+  @media print{
+    body{ background:transparent; padding:0; }
+    .page{ box-shadow:none; border:none; width:100%; }
+    header .meta{ text-align:right; }
+  }
+  /* subtle form field style when focused */
+  [contenteditable]:focus{ box-shadow:inset 0 0 0 2px rgba(10,100,200,0.06); }
+  .footer-note{ margin-top:12px; font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+  <div class="page" role="document" aria-label="Invoice">
+    <header>
+      <div class="brand">
+        <h1 contenteditable="true" class="editable">Rishit Computers Ltd.</h1>
+        <p contenteditable="true" class="editable small">
+          Since-1999<br>
+          223/6 (2nd Floor), BCS Computer City, IDB Bhaban, Agargaon, Dhaka-1207, Bangladesh.
+          Call Our Sales Line: 01411-001027, 01411-001049. Email: sales@rishit.com.bd
+        </p>
+      </div>
+      <div class="meta">
+        <div class="title">Invoice</div>
+        <div><strong>Invoice No.</strong><br><span contenteditable="true" class="editable">INV-RCLID-2025-004369</span></div>
+        <div><strong>Date / Time</strong><br><span contenteditable="true" class="editable">15-Oct-2025 08:46:55 PM</span></div>
+        <div><strong>Status</strong><br><span contenteditable="true" class="editable">Approved</span></div>
+        <div><strong>Sales Mode</strong><br><span contenteditable="true" class="editable">Cash</span></div>
+      </div>
+    </header>
+
+    <div class="section">
+      <div class="box">
+        <span class="label">Customer</span>
+        <div><strong>Name:</strong> <span contenteditable="true" class="editable">AUMIYO IMTIAZ</span></div>
+        <div><strong>Code:</strong> <span contenteditable="true" class="editable">Cust-0000022354</span></div>
+        <div><strong>Contact No.:</strong> <span contenteditable="true" class="editable">01712379724</span></div>
+        <div><strong>Address:</strong> <span contenteditable="true" class="editable">DHAKA BANGLADESH</span></div>
+      </div>
+
+      <div class="box">
+        <span class="label">Sales / Approval</span>
+        <div><strong>Sales Person:</strong> <span contenteditable="true" class="editable">S15 # MD. TANIM AHAMED</span></div>
+        <div><strong>Order By:</strong> <span contenteditable="true" class="editable">TANIM</span></div>
+        <div><strong>Approved By:</strong> <span contenteditable="true" class="editable">RASEL</span></div>
+        <div><strong>Billed By:</strong> <span contenteditable="true" class="editable">TANIM</span></div>
+        <div><strong>Challan No.:</strong> <span contenteditable="true" class="editable">DC-RCLID-2025-004369</span></div>
+        <div><strong>Order No.:</strong> <span contenteditable="true" class="editable">SO-RCLID-2025-004365</span></div>
+      </div>
+    </div>
+
+    <table class="invoice" aria-label="Invoice items">
+      <thead>
+        <tr>
+          <th style="width:34px" class="center">#</th>
+          <th style="width:120px">Code</th>
+          <th>Product Name / Description</th>
+          <th style="width:60px" class="center">Qty</th>
+          <th style="width:60px" class="center">Unit</th>
+          <th style="width:100px" class="right">Price (৳)</th>
+          <th style="width:70px" class="right">Disc.</th>
+          <th style="width:120px" class="right">Amount (৳)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="center">1</td>
+          <td contenteditable="true" class="editable">HDMI TO</td>
+          <td contenteditable="true" class="editable">CABLE HDMI TO HDMI 1.5Meter</td>
+          <td class="center" contenteditable="true">1.00</td>
+          <td class="center" contenteditable="true">PCS</td>
+          <td class="right" contenteditable="true">1.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">1.00</td>
+        </tr>
+
+        <tr>
+          <td class="center">2</td>
+          <td contenteditable="true" class="editable">SEAVIEW M360 WHITE</td>
+          <td contenteditable="true" class="editable">CASING GOLDEN FIELD ATX GAMING SEAVIEW M360 WHITE 3x120mm ARGB FAN TEMPERED GLASS LEFT SIDE &amp; FRONT PANEL</td>
+          <td class="center" contenteditable="true">1.00</td>
+          <td class="center" contenteditable="true">PCS</td>
+          <td class="right" contenteditable="true">4,000.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">4,000.00</td>
+        </tr>
+
+        <tr>
+          <td class="center">3</td>
+          <td contenteditable="true" class="editable">AK400 ZERO DARK PLUS</td>
+          <td contenteditable="true" class="editable">COOLING FAN DEEPCOOL CPU COOLER AK400 ZERO DARK PLUS 3YW (Warranty: 1095 Day(s))</td>
+          <td class="center" contenteditable="true">1.00</td>
+          <td class="center" contenteditable="true">PCS</td>
+          <td class="right" contenteditable="true">4,000.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">4,000.00</td>
+        </tr>
+
+        <tr>
+          <td class="center">4</td>
+          <td contenteditable="true" class="editable">ZOTAC GAMING GEFORCE RTX 3050 ECO 8GB GDDR6</td>
+          <td contenteditable="true" class="editable">GRAPHICS CARD ZOTAC GAMING GEFORCE RTX 3050 ECO 8GB GDDR6. Boost: 1777 MHz, Memory Clock: 14 Gbps, CUDA cores: 2560. Outputs: 3 x DisplayPort, 1 x HDMI, 3YW.</td>
+          <td class="center" contenteditable="true">1.00</td>
+          <td class="center" contenteditable="true">PCS</td>
+          <td class="right" contenteditable="true">29,000.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">29,000.00</td>
+        </tr>
+
+        <tr>
+          <td class="center">5</td>
+          <td contenteditable="true" class="editable">V50S BLACK</td>
+          <td contenteditable="true" class="editable">KEY BOARD RAPOO V50S BLACK BACKLIT GAMING 2YW</td>
+          <td class="center" contenteditable="true">1.00</td>
+          <td class="center" contenteditable="true">PCS</td>
+          <td class="right" contenteditable="true">1,500.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">1,500.00</td>
+        </tr>
+
+        <tr>
+          <td class="center">6</td>
+          <td contenteditable="true" class="editable">PRO B650M-P</td>
+          <td contenteditable="true" class="editable">MAIN BOARD MSI PRO B650M-P AM5 SOCKET, DDR5 MEMORY, Dual Memory Channel, DIMM SLOTS:4, MAX MEMORY (GB) 192, M.2 SLOTS:2, USB 3.2 (Type C) 3YW</td>
+          <td class="center" contenteditable="true">1.00</td>
+          <td class="center" contenteditable="true">PCS</td>
+          <td class="right" contenteditable="true">15,500.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">15,500.00</td>
+        </tr>
+
+        <tr>
+          <td class="center">7</td>
+          <td contenteditable="true" class="editable">SOFT.</td>
+          <td contenteditable="true" class="editable">MOUSE PAD ALL BRAND</td>
+          <td class="center" contenteditable="true">1.00</td>
+          <td class="center" contenteditable="true">PCS</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+        </tr>
+
+        <tr>
+          <td class="center">8</td>
+          <td contenteditable="true" class="editable">M612 RGB</td>
+          <td contenteditable="true" class="editable">MOUSE REDRAGON M612 RGB PREDATOR GAMING 1YW</td>
+          <td class="center" contenteditable="true">1.00</td>
+          <td class="center" contenteditable="true">PCS</td>
+          <td class="right" contenteditable="true">1,500.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">1,500.00</td>
+        </tr>
+
+        <tr>
+          <td class="center">9</td>
+          <td contenteditable="true" class="editable">AC650W 80 PLUS BRONZE</td>
+          <td contenteditable="true" class="editable">POWER SUPPLY ACER Professional AC650W 80 PLUS BRONZE FULL MODULAR 5YW</td>
+          <td class="center" contenteditable="true">1.00</td>
+          <td class="center" contenteditable="true">PCS</td>
+          <td class="right" contenteditable="true">5,800.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">5,800.00</td>
+        </tr>
+
+        <tr>
+          <td class="center">10</td>
+          <td contenteditable="true" class="editable">7700 3.8-5.3Ghz</td>
+          <td contenteditable="true" class="editable">Processor AMD Ryzen 7 - 7700 Cache 32MB 8 Core 16 Thread Base Clock 3.8Ghz Up To 5.3 Ghz AM5 Socket Three Years Warranty.</td>
+          <td class="center" contenteditable="true">1.00</td>
+          <td class="center" contenteditable="true">PCS</td>
+          <td class="right" contenteditable="true">23,200.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">23,200.00</td>
+        </tr>
+
+        <tr>
+          <td class="center">11</td>
+          <td contenteditable="true" class="editable">16GB-6000 MHZ VENGEANCE DDR5</td>
+          <td contenteditable="true" class="editable">Ram Corsair 16GB Vengeance DDR5 Desktop 6000 MHz (CMK32GX5M2E6000C36) Non RGB. Intel XMP Ready. Product Life Time Warranty.</td>
+          <td class="center" contenteditable="true">1.00</td>
+          <td class="center" contenteditable="true">PCS</td>
+          <td class="right" contenteditable="true">7,500.00</td>
+          <td class="right" contenteditable="true">0.00</td>
+          <td class="right" contenteditable="true">7,500.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Totals area (editable) -->
+    <div style="display:flex; justify-content:flex-end; margin-top:10px; gap:12px;">
+      <div style="width:320px; border:1px solid #ddd; padding:10px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><div class="small">Subtotal</div><div contenteditable="true" class="editable right">91,001.00</div></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><div class="small">Discount</div><div contenteditable="true" class="editable right">0.00</div></div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><div class="small">Tax (if any)</div><div contenteditable="true" class="editable right">0.00</div></div>
+        <hr style="border:none;border-top:1px dashed #ddd;margin:8px 0;">
+        <div style="display:flex; justify-content:space-between; font-weight:700; font-size:15px;"><div>Total</div><div contenteditable="true" class="editable right">91,001.00</div></div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      <div><strong> </strong> </div>
+    </div>
+  </div>
+</body>
+</html>

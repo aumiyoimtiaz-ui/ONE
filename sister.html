@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy 10th Birthday, Arani!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1: #ffecd2;
+      --bg2: #fcb69f;
+      --accent: #ff66b3;
+      --card-bg: #fff;
+      --text-dark: #333;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{font-family:'Montserrat',sans-serif; margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--bg1),var(--bg2));}
+    .container{max-width:1000px; width:95%; padding:20px; display:grid; grid-template-columns:1fr 360px; gap:20px; align-items:start}
+
+    .card{
+      background:var(--card-bg);
+      border-radius:18px;
+      padding:28px;
+      box-shadow:0 8px 30px rgba(0,0,0,0.12);
+      position:relative;
+      overflow:hidden;
+      min-height:520px;
+    }
+
+    .title{font-family:'Baloo 2', cursive; font-size:34px; color:var(--accent); margin:0}
+    .subtitle{color:var(--text-dark); margin-top:6px}
+    .preview{display:flex; align-items:center; justify-content:flex-start; min-height:300px}
+    .message{margin-top:16px; font-size:18px}
+
+    .characters{width:220px; display:flex; flex-direction:column; gap:14px; align-items:center; margin-right:18px}
+
+    /* SVG character styles & animations */
+    .char{width:160px; height:120px; cursor:pointer; user-select:none}
+    .cat{transform-origin:50% 80%; animation:cat-wiggle 3s ease-in-out infinite}
+    .mouse{transform-origin:50% 80%; animation:mouse-bounce 2.6s ease-in-out infinite}
+
+    @keyframes cat-wiggle{
+      0%{transform:translateY(0) rotate(0)}
+      25%{transform:translateY(-6px) rotate(-3deg)}
+      50%{transform:translateY(0) rotate(0)}
+      75%{transform:translateY(-6px) rotate(3deg)}
+      100%{transform:translateY(0) rotate(0)}
+    }
+    @keyframes mouse-bounce{
+      0%{transform:translateY(0)}
+      40%{transform:translateY(-14px)}
+      70%{transform:translateY(-6px)}
+      100%{transform:translateY(0)}
+    }
+
+    .balloons{position:absolute; right:-40px; top:-40px; transform:rotate(15deg); font-size:48px; opacity:0.95}
+
+    .controls{display:flex; flex-direction:column; gap:10px}
+    label{font-size:14px}
+    input, textarea, button, select{padding:10px; border-radius:8px; border:1px solid #eee; font-size:16px}
+    textarea{min-height:84px}
+    .btn{background:var(--accent); color:#fff; border:none; cursor:pointer; padding:10px 12px; border-radius:8px}
+
+    #confetti{position:fixed; inset:0; pointer-events:none}
+
+    /* small sparkle effect behind message */
+    .sparkle{position:absolute; left:18px; top:120px; width:160px; height:160px; pointer-events:none; opacity:0.12;}
+
+    @media (max-width:900px){
+      .container{grid-template-columns:1fr}
+      .balloons{display:none}
+      .characters{flex-direction:row}
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+  <div class="container">
+    <div class="card" id="card">
+      <div class="balloons">🎈🎈🎈</div>
+      <h1 class="title" id="card-title">Happy <span id="card-age">10th</span> Birthday, <span id="sister-name">Arani</span>!</h1>
+      <p class="subtitle">To my brilliant class 3 sister — keep shining!</p>
+
+      <div class="preview">
+        <div class="characters">
+          <!-- Cute original cartoon cat (not Tom) -->
+          <svg class="char cat" id="cat" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <ellipse cx="100" cy="96" rx="60" ry="40" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+              <circle cx="70" cy="60" r="28" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+              <circle cx="130" cy="60" r="28" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+              <circle cx="78" cy="62" r="8" fill="#3b3b3b"/>
+              <circle cx="122" cy="62" r="8" fill="#3b3b3b"/>
+              <path d="M88 75 Q100 86 112 75" stroke="#b34b6b" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <polygon points="52,42 66,26 72,44" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+              <polygon points="148,42 134,26 128,44" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+              <!-- tail -->
+              <path d="M160 92 Q180 82 188 94 Q180 72 156 88" fill="#ffd9e6" stroke="#ff8fb1" stroke-width="2"/>
+            </g>
+          </svg>
+
+          <!-- Cute original cartoon mouse (not Jerry) -->
+          <svg class="char mouse" id="mouse" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <ellipse cx="100" cy="100" rx="46" ry="30" fill="#e6f7ff" stroke="#7fbffb" stroke-width="2"/>
+              <circle cx="80" cy="82" r="18" fill="#e6f7ff" stroke="#7fbffb" stroke-width="2"/>
+              <circle cx="120" cy="82" r="18" fill="#e6f7ff" stroke="#7fbffb" stroke-width="2"/>
+              <circle cx="92" cy="84" r="6" fill="#3b3b3b"/>
+              <circle cx="108" cy="84" r="6" fill="#3b3b3b"/>
+              <path d="M94 96 Q100 104 106 96" stroke="#578fcf" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M60 88 Q48 78 54 70" stroke="#7fbffb" stroke-width="2" fill="#e6f7ff"/>
+            </g>
+          </svg>
+        </div>
+
+        <div style="position:relative;">
+          <svg class="sparkle" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <g fill="#fff8b3">
+              <circle cx="60" cy="20" r="6"/>
+              <circle cx="90" cy="40" r="4"/>
+              <circle cx="30" cy="40" r="3"/>
+              <circle cx="50" cy="80" r="5"/>
+            </g>
+          </svg>
+
+          <p class="message" id="message-line">You're 10 today — may your day be full of giggles, cake, and fun! 🎂</p>
+          <p style="margin-top:20px;">Love, <strong id="from-name">Your Big Brother</strong></p>
+        </div>
+      </div>
+
+      <div style="margin-top:20px; display:flex; gap:8px">
+        <button class="btn" id="celebrate">Surprise! 🎉</button>
+        <button class="btn" id="print">Print / Save as PDF</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <label>Sibling's name: <input id="input-name" value="Arani" /></label>
+      <label>Age: <input id="input-age" value="10" /></label>
+      <label>Short message: <textarea id="input-message">You're 10 today — may your day be full of giggles, cake, and fun!</textarea></label>
+      <label>From (your name): <input id="input-from" value="Your Big Brother" /></label>
+      <label>Theme:
+        <select id="theme-select">
+          <option value="pink">Pink</option>
+          <option value="blue">Blue</option>
+          <option value="rainbow">Rainbow</option>
+        </select>
+      </label>
+
+      <div style="display:flex; gap:8px">
+        <button class="btn" id="apply">Apply</button>
+        <button class="btn" id="reset">Reset</button>
+      </div>
+
+      <p style="font-size:13px; color:#33385">Tip: Click on the cat or mouse to make them jump and wiggle — fun for kids!</p>
+    </div>
+  </div>
+
+  <script>
+    const nameEl = document.getElementById('sister-name');
+    const ageEl = document.getElementById('card-age');
+    const titleEl = document.getElementById('card-title');
+    const msgEl = document.getElementById('message-line');
+    const fromEl = document.getElementById('from-name');
+
+    document.getElementById('apply').addEventListener('click', ()=>{
+      const n = document.getElementById('input-name').value || '[Name]';
+      const age = document.getElementById('input-age').value || '10';
+      const msg = document.getElementById('input-message').value || '';
+      const from = document.getElementById('input-from').value || 'Love';
+      nameEl.textContent = n;
+      ageEl.textContent = age + (String(age).endsWith('1') && age!=='11' ? 'st' : (String(age).endsWith('2') && age!=='12' ? 'nd' : (String(age).endsWith('3') && age!=='13' ? 'rd' : 'th')));
+      titleEl.innerHTML = `Happy <span id="card-age">${age}th</span> Birthday, <span id="sister-name">${n}</span>!`;
+      msgEl.textContent = msg;
+      fromEl.textContent = from;
+      applyTheme(document.getElementById('theme-select').value);
+    });
+
+    document.getElementById('reset').addEventListener('click', ()=>{
+      document.getElementById('input-name').value = 'Arani';
+      document.getElementById('input-age').value = '10';
+      document.getElementById('input-message').value = "You're 10 today — may your day be full of giggles, cake, and fun!";
+      document.getElementById('input-from').value = 'Your Big Brother';
+      document.getElementById('theme-select').value = 'pink';
+      document.getElementById('apply').click();
+    });
+
+    document.getElementById('print').addEventListener('click', ()=> window.print());
+    document.getElementById('celebrate').addEventListener('click', ()=>launchConfetti());
+
+    // character click interactions
+    const cat = document.getElementById('cat');
+    const mouse = document.getElementById('mouse');
+    cat.addEventListener('click', ()=>{
+      cat.style.animation = 'cat-wiggle 0.9s ease-in-out 0';
+      setTimeout(()=> cat.style.animation = 'cat-wiggle 3s ease-in-out infinite', 900);
+    });
+    mouse.addEventListener('click', ()=>{
+      mouse.style.animation = 'mouse-bounce 0.7s ease-in-out 0';
+      setTimeout(()=> mouse.style.animation = 'mouse-bounce 2.6s ease-in-out infinite', 700);
+    });
+
+    // confetti (same as before)
+    const confettiCanvas = document.getElementById('confetti');
+    const ctx = confettiCanvas.getContext('2d');
+    let W, H, confetti = [];
+    function resize(){ W = confettiCanvas.width = window.innerWidth; H = confettiCanvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+    function createConfetti(){ for(let i=0;i<120;i++){ confetti.push({x:rand(0,W), y:rand(-H,0), r:rand(2,8), d:rand(10,40), color: ['#ff66b3','#ffd166','#7bdff6','#a0e7a0'][Math.floor(rand(0,4))] }); } }
+    function update(){ ctx.clearRect(0,0,W,H); for(let p of confetti){ p.y += Math.cos(p.d)*2 + 2; p.x += Math.sin(p.d); ctx.fillStyle = p.color; ctx.beginPath(); ctx.ellipse(p.x,p.y,p.r,p.r*0.7,0,0,Math.PI*2); ctx.fill(); if(p.y>H+10) { p.y = rand(-H,0); p.x = rand(0,W); } } requestAnimationFrame(update); }
+    function launchConfetti(){ createConfetti(); update(); setTimeout(()=>confetti=[], 4000); }
+
+    function applyTheme(t){
+      if(t==='pink'){
+        document.documentElement.style.setProperty('--bg1','#ffefef');
+        document.documentElement.style.setProperty('--bg2','#ffe6f2');
+        document.documentElement.style.setProperty('--accent','#ff66b3');
+      } else if(t==='blue'){
+        document.documentElement.style.setProperty('--bg1','#e6f7ff');
+        document.documentElement.style.setProperty('--bg2','#eaf0ff');
+        document.documentElement.style.setProperty('--accent','#5aa9ff');
+      } else if(t==='rainbow'){
+        document.documentElement.style.setProperty('--bg1','#fff1c9');
+        document.documentElement.style.setProperty('--bg2','#e0ffe8');
+        document.documentElement.style.setProperty('--accent','#ff8fa3');
+      }
+    }
+
+    applyTheme('pink');
+  </script>
+</body>
+</html>
